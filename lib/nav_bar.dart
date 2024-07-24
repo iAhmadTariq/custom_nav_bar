@@ -2,15 +2,20 @@
 import 'package:flutter/material.dart';
 
 class CustomNavBar extends StatefulWidget {
-  const CustomNavBar({super.key});
+  final Function(int) onItemSelected;
+  final int selectedIndex;
+  const CustomNavBar({super.key, required this.onItemSelected, required this.selectedIndex});
 
   @override
   State<CustomNavBar> createState() => _CustomNavBarState();
 }
 
 class _CustomNavBarState extends State<CustomNavBar> {
-  int selectedIndex = -1;
-
+  List items = [
+    Icons.favorite,
+    Icons.home,
+    Icons.search,
+  ];
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -26,20 +31,22 @@ class _CustomNavBarState extends State<CustomNavBar> {
         children: List.generate(3, (index) {
           return GestureDetector(
             onTap: () {
-              setState(() {
-                selectedIndex = index;
-              });
+              // setState(() {
+              //   widget.selectedIndex = index;
+              // });
+              widget.onItemSelected(index);
             },
             child: AnimatedContainer(
               duration: const Duration(milliseconds: 300),
               margin: const EdgeInsets.all(8.0),
-              width: selectedIndex == index ? 60 : 50,
-              height: selectedIndex == index ? 60 : 50,
-              transform: selectedIndex == index ? Matrix4.translationValues(0, -10, 0):Matrix4.translationValues(0, 0, 0),
+              width: widget.selectedIndex == index ? 60 : 50,
+              height: widget.selectedIndex == index ? 60 : 50,
+              transform: widget.selectedIndex == index ? Matrix4.translationValues(0, -10, 0):Matrix4.translationValues(0, 0, 0),
               decoration: BoxDecoration(
-                color: selectedIndex == index ? Colors.grey:const Color.fromARGB(255, 23, 23, 23),
+                color: widget.selectedIndex == index ? Colors.grey:const Color.fromARGB(255, 23, 23, 23),
                 shape: BoxShape.circle,
               ),
+              child: Icon(items[index],color: widget.selectedIndex != index ? Colors.grey:const Color.fromARGB(255, 23, 23, 23),),
             ),
           );
         }),

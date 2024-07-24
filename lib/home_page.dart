@@ -1,18 +1,32 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test_app/nav_bar.dart';
+import 'package:flutter_test_app/page_one.dart';
+import 'package:flutter_test_app/page_three.dart';
+import 'package:flutter_test_app/page_two.dart';
 
-class HomePage extends StatelessWidget {
+class HomePage extends StatefulWidget {
   const HomePage();
 
   @override
+  State<HomePage> createState() => _HomePageState();
+}
+
+class _HomePageState extends State<HomePage> {
+    PageController _pageController = PageController();
+    int _selectedIndex = 0;
+
+  @override
+  void initState() {
+    _pageController.addListener((){
+      setState(() {
+        _selectedIndex = _pageController.page!.round();
+      });
+    });
+    super.initState();
+  }
+  @override
   Widget build(BuildContext context) {
-    final List colors = [
-      Colors.blue[300],
-      Colors.green[300],
-      Colors.pink[300],
-      Colors.purple[300],
-      Colors.orange[300]
-    ];
+
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.black12,
@@ -24,23 +38,19 @@ class HomePage extends StatelessWidget {
       backgroundColor: Colors.black12,
       body: Stack(
         children: [
-          ListView.separated(
-            itemBuilder: (context, index) => Container(
-              width: double.infinity,
-              height: 200,
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(20),
-                color: colors[index % 5],
-              ),
-            ),
-            separatorBuilder: (context, index) => const SizedBox(
-              height: 10,
-            ),
-            itemCount: 10,
+          PageView(
+            controller: _pageController,
+            children: const [PageThree(), PageOne(), PageTwo()],
+            
           ),
-          const Align(
+          Align(
             alignment: Alignment.bottomCenter,
-            child: CustomNavBar(),
+            child: CustomNavBar(
+              selectedIndex: _selectedIndex,
+              onItemSelected: (index) {
+                _pageController.jumpToPage(index);
+              },
+            ),
           ),
         ],
       ),
